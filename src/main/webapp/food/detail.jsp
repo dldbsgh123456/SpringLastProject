@@ -21,12 +21,12 @@
             <img src="${vo.poster}" style="width: 290px;height: 250px">
           </td>
           <td colspan="2">
-            <h3>${vo.name }&nbsp;<span style="color:orange;">${vo.score}</span></h3>
+            <h3 style="color:blue">${vo.name }&nbsp;<span style="color:orange;">${vo.score}</span></h3>
           </td>
         </tr>
         <tr>
           <td width=15% style="color:gray">주소</td>
-          <td width=55%>${vo.address }</td>
+          <td width=55% style="color:green">${vo.address }</td>
         </tr>
         <tr>
           <td width=15% style="color:gray">전화</td>
