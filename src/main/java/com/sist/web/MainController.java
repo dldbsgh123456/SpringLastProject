@@ -65,13 +65,6 @@ public class MainController {
     	 model.addAttribute("clist",clist);
     	 model.addAttribute("size",clist.size());
     	 model.addAttribute("main_jsp","../main/home.jsp");
-    	 /*
-    	  *  내장객체의 사용처
-    	  *    request/response => cookie / fileupload
-    	  *    session => 보안처리 / 회원 관련
-    	  *    RedirectAttributes : 이미 있는 화면으로 이동
-    	  * 
-    	  */
     	 return "main/main";
      }
 }
