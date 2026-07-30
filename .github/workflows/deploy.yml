@@ -13,7 +13,7 @@ jobs:
         working-directory: .
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
  
       - name: Maven Build
         run: mvn clean package -DskipTests
