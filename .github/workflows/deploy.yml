@@ -9,7 +9,7 @@ jobs:
     runs-on: self-hosted
   #모든 명령의 기본 작업 디렉토리 설정
   defaults:
-    runs-on:
+        run:
       working-directory: SpringLastProjcet
     steps:
       - name: Checkout
