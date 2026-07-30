@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+    <util:properties id="db" location="/WEB-INF/datasource/db.properties"/>
+    <!--  데이터 정보 모으기 -->
+    <bean id="ds" class="org.apache.commons.dbcp.BasicDataSource"
+       p:driverClassName="#{db['driver']}"
+       p:url="#{db['url']}"
+       p:username="#{db['username']}"
+       p:password="#{db['password']}"
+    />
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+       p:dataSource-ref="ds"
+    />
+    
+    <tx:annotation-driven/>
+    <!-- 메소드 위에 @Transactional -->
+    <!-- 
+         commit / rollback
+         
+         public void insert()
+         {
+           try
+           {
+             getConnection(); ===@Before
+            ================================
+             conn.setAutoCommit(false); => @Around(Before)
+             입고()
+             재고()
+             conn.commit(); @Around(after)
+            ================================
+           }catch(Exception e)
+           {
+             conn.rollback() => @AfterThrowing
+             disConnection() => @After
+           }
+           finally
+           {
+             conn.setAutoCommit(true)
+             disConnection()
+           }
+         }
+         
+         @Transactional
+         public void insert()
+         {
+           입고()
+           재고()
+         }
+     -->
+     <!-- MyBatis -->
+     <bean id="ssf" class="org.mybatis.spring.SqlSessionFactoryBean"
+       p:dataSource-ref="ds"
+     />
+     
+     <!-- mapper 구현 -->
+     <mybatis-spring:scan base-package="com.sist.mapper"
+       factory-ref="ssf"
+     />
+     <!-- 
+          1. 메모리 할당
+          2. setter
+          3. 개발자 활용
+          4. 메모리 소멸
+          
+          순서는 상관없다
+      -->
+</beans>
