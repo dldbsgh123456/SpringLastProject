@@ -18,32 +18,32 @@ import lombok.RequiredArgsConstructor;
 public class FoodController {
       private final FoodService fService;
       /*
-       *   1. Àü¼Û => ?º¯¼ö
-       *   2. Ä¿¸Çµå °´Ã¼ => VO (È¸¿ø°¡ÀÔ , È¸¿ø¼öÁ¤ , ±Û¾²±â)
-       *   3. ³»Àå °´Ã¼
+       *   1. ì „ì†¡ => ?ë³€ìˆ˜
+       *   2. ì»¤ë§¨ë“œ ê°ì²´ => VO (íšŒì›ê°€ì… , íšŒì›ìˆ˜ì • , ê¸€ì“°ê¸°)
+       *   3. ë‚´ì¥ ê°ì²´
        *      1) HttpSession
-       *      2) Cookie => ÀúÀå : response
-       *                   ÀĞ±â : request 
+       *      2) Cookie => ì €ì¥ : response
+       *                   ì½ê¸° : request 
        * 
        */
       
       @GetMapping("food/detail_before.do")
       public String food_detail_before(int no,HttpServletResponse response,RedirectAttributes ra)
       {
-    	  // ÄíÅ° »ı¼º
-    	  Cookie cookie=new Cookie("food_"+no,String.valueOf(no)); // ÄíÅ°´Â ¹®ÀÚ¿­¸¸ ÀúÀåÀÌ °¡´É
+    	  // ì¿ í‚¤ ìƒì„±
+    	  Cookie cookie=new Cookie("food_"+no,String.valueOf(no)); // ì¿ í‚¤ëŠ” ë¬¸ìì—´ë§Œ ì €ì¥ì´ ê°€ëŠ¥
     	  cookie.setPath("/");
     	  cookie.setMaxAge(60*60*24);
     	  response.addCookie(cookie);
-    	  ra.addAttribute("no",no); // ¾ê°¡ do µÚ¿¡ ?no=1 ºÙ¿©¼­ º¸³»ÁÜ 
+    	  ra.addAttribute("no",no); // ì–˜ê°€ do ë’¤ì— ?no=1 ë¶™ì—¬ì„œ ë³´ë‚´ì¤Œ 
     	  return "redirect:../food/detail.do";
-    	  // => Á¶È¸¼ö Áõ°¡ / ÄíÅ° ÀúÀåµÈ °ª Ãâ·Â(back()(x))
+    	  // => ì¡°íšŒìˆ˜ ì¦ê°€ / ì¿ í‚¤ ì €ì¥ëœ ê°’ ì¶œë ¥(back()(x))
       }
       
       @GetMapping("food/detail.do")
       /*
        *   <form> => get / post
-       *   ³ª¸ÓÁö ÅÂ±×´Â get
+       *   ë‚˜ë¨¸ì§€ íƒœê·¸ëŠ” get
        *   location.href => get
        *   redirect: => get
        *   
