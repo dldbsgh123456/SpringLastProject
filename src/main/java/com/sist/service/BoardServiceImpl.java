@@ -121,5 +121,34 @@ public class BoardServiceImpl implements BoardService{
 		mapper.boardUpdate(vo);
 	}
 
+	@Override
+	@Transactional
+	public boolean boardDelete(int no, String pwd) {
+		// TODO Auto-generated method stub
+		boolean bCheck=false;
+		BoardVO vo=mapper.boardInfoData(no);
+		String db_pwd=mapper.boardGetPassword(no);
+        if(db_pwd.equals(pwd))
+        {
+		  bCheck=true;
+		  if(vo.getDepth()==0)
+		  {
+			 mapper.boardDelete(no); 
+		  }
+		  else
+		  {
+			 BoardVO bvo=new BoardVO();
+			 bvo.setContent("관리자 삭제한 게시물입니다");
+			 bvo.setSubject("관리자 삭제한 게시물입니다");
+			 bvo.setNo(no);
+			 
+			 mapper.boardMsgUpdate(bvo);
+		  }
+		  
+		  mapper.boardDepth(vo.getRoot());
+        }
+        return bCheck;
+	}
+
    
 }

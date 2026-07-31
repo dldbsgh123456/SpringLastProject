@@ -44,6 +44,8 @@ public class MainController {
     	 model.addAttribute("endPage",endPage);
     	 model.addAttribute("totalpage",totalpage);
     	 
+    	 model.addAttribute("main_jsp","../main/home.jsp");
+    	 
     	 List<FoodVO> clist=new ArrayList<FoodVO>();
     	 Cookie[] cookies=request.getCookies();
     	 if(cookies!=null)
@@ -64,7 +66,10 @@ public class MainController {
     	 }
     	 model.addAttribute("clist",clist);
     	 model.addAttribute("size",clist.size());
-    	 model.addAttribute("main_jsp","../main/home.jsp");
+    	 
+    	 List<FoodVO> fList=fService.foodHit7Data();
+    	 model.addAttribute("fList",fList);
+    	 
     	 return "main/main";
      }
 }

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	<!-- 
+	     /member/login.do
+	     
+	                    요청                 | = permitAll(누구나 접근이 가능)
+	     user(client) ======= security 필터 ====== 서블릿 ===== HandlerMapping = Model = ViewResolver = JSP
+	                                            (DispatcherServlet)
+	     /admin/admin.do
+	     user ====== security 필터 ===== 서블릿
+	       |             |
+	       =============== 403 접근 거부
+	       
+	       .do => 접근 권한 등록
+	       /member/** => permitAll
+	       /admin/** => hasRole('ROLE_ADMIN')
+	       /board/** => hasAnyRole('ROLE_ADMIN','ROLE_USER')
+	 -->
+    <context:component-scan base-package="com.sist.*"/>
+    <!-- 권한 설정 -->
+    <http auto-config="true" use-expressions="true"> <!-- 필요한 용어들을 쓰겠다 -->
+      <csrf disabled="true"/> <!-- 해킹방지: 사이트 위조 방지(파밍) 사용자의 의도와 관계없이 행해지는 공격기법 -->
+      <intercept-url pattern="/member/**" access="permitAll"/>
+      <intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')"/>
+      <intercept-url pattern="/**" access="permitAll"/>
+      <intercept-url pattern="/member/login.do" access="permitAll"/>
+      <!-- login 처리 -->
+      <form-login login-page="/member/login.do"
+                  login-processing-url="/member/login.do"
+                  username-parameter="userid"
+                  password-parameter="userpwd"
+                  always-use-default-target="false"
+                  authentication-failure-handler-ref="LoginFailureHandler"
+                  authentication-success-handler-ref="LoginSuccessHandler"
+      />
+      <!-- <remember-me/> -->
+      <!-- logout 처리 -->
+      <logout
+         logout-url="/member/logout.do"
+         invalidate-session="true"
+         logout-success-url="/main/main.do"
+      />      
+    </http>
+    <beans:bean id="LoginSuccessHandler" class="com.sist.security.LoginSuccessHandler"/>
+    <beans:bean id="LoginFailureHandler" class="com.sist.security.LoginFailureHandler"/>
+   
+    
+    <!-- 자동로그인 처리 -->
+    <!-- 데이터베이스 연결 : session에 저장 -->
+    <jdbc-user-service data-source-ref="ds" 
+    id="userService"
+    users-by-username-query="SELECT userid as username,userpwd as password,enable FROM springMember WHERE userid=?"
+    authorities-by-username-query="SELECT userid as username,authority FROM authority WHERE userid=?"
+    />
+    <!-- 인증 관리자 등록 -->
+    <authentication-manager>
+      <authentication-provider user-service-ref="userService">
+        <password-encoder ref="bcryptEncoder"/>
+      </authentication-provider>
+    </authentication-manager>
+    <!-- 
+        login.do == form-login에서 처리한다
+                         |
+                        실패하면
+                        성공하면 = 정보에 session에 저장  
+       
+        logout == <logout>
+                      | = session 해제 
+                      | = main.do 이동
+     -->
+    <!-- 비밀번호 암호화 -->
+    <beans:bean
+        id="bcryptEncoder"
+        class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"
+       />    
+</beans:beans>

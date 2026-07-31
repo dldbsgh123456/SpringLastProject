@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class FoodVO {
-     private int no;
+     private int no,hit;
      private String name,address,phone,type,parking,poster,time,content,price,theme;
      private double score;
 }
